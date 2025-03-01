@@ -28,7 +28,7 @@ EOL                EQU 10
 
 SECTION .bss
 
-MAXARGS            EQU 15             ;Maximum # of args we support <16: 15 + Invocation text>
+MAXARGS            EQU 15             ;Maximum # of args we support.
 ARGLENS:           RESQ MAXARGS       ;Table of argument lengths
 
 ;------------------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ JA ERROR                ;If so, exit wiht an error msg
 
 ; Here we calculate argument lengths and store lengths in table ARGLENS
 
-MOV RBX,1               ; Stack address offset starts at RBX*8 - R GPs are 8 bytes long <64 bits>
+MOV RBX,1               ; Stack address offset starts at RBX*8 : R GPs are 8 bytes long <64 bits>
 
 SCANONE:
 XOR RAX,RAX            ;Clear AL, because we're looking for 0
@@ -94,6 +94,7 @@ MOV RDX,ERRLEN
 SYSCALL
 
 EXIT:
+
 MOV RSP,RBP                 ;Epilogue
 POP RBP
 
