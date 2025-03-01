@@ -65,24 +65,24 @@ JNZ NEAR ERROR         ;We execute this instruxn only when REPNE SCASB ended ohn
 
 MOV BYTE [RDI-1],EOL    ;Store an EOL where the null used to be [REPNE SCASB leaves RDI at +1 from where it found a match]
 SUB RDI,RDX             ;Subtract position of 0 from start address [We are generating an ordinal count here, hence its: ((pstn of 0 +1)-start addy)]
-MOV [ARGLENS+RBX*8],RDI ;
-INC RBX
-CMP RBX,R13
-JBE SCANONE
+MOV [ARGLENS+RBX*8],RDI ;Pass the length of the arg
+INC RBX                 ;Increment the argument counter
+CMP RBX,R13             ;Have we exceeded the argument count
+JBE SCANONE             ;If not,loop back and scan another one
 
 ; Display all arguments to stdout:
 
-MOV RBX,1
+MOV RBX,1               ;Start (for stack addressing reasons) at 1
 
 SHOW:
 MOV RAX,SYS_WRITE_CALL_VAL
 MOV RDI,STDOUT_FD
-MOV RSI,[RBP+8+RBX*8]
-MOV RDX,[ARGLENS+RBX*8]
+MOV RSI,[RBP+8+RBX*8]       ;Pass offset of the argument
+MOV RDX,[ARGLENS+RBX*8]     ;Pass the length of the argument
 SYSCALL
 
-INC RBX
-CMP RBX,R13
+INC RBX                     ;Increment the argument counter
+CMP RBX,R13                 ;Have we displayed all the args?
 JBE SHOW
 JMP EXIT
 
@@ -99,4 +99,4 @@ POP RBP
 
 MOV RAX,EXIT_SYSCALL
 MOV RDI,OK_RET_VAL
-SYSCALL
+SYSCALL                     ;Auf Wiedersehen
