@@ -57,15 +57,15 @@ SCANONE:
 XOR RAX,RAX            ;Clear AL, because we're looking for 0
 MOV RCX,0000FFh        ;Limit search to 65535 bytes max
 MOV RDI,[RBP+8+RBX*8]  ;Put address of string to search in RDI
-MOV RDX,RDI            ;Put address of string to search in RDI
+MOV RDX,RDI            ;Put address of string to search in RDX
 
-CLD
-REPNE SCASB
-JNZ NEAR ERROR
+CLD                    ;We're going to be searching up memory
+REPNE SCASB            ;Search for null in string @ RDI
+JNZ NEAR ERROR         ;We execute this instruxn only when REPNE SCASB ended ohne AL zu finden.
 
-MOV BYTE [RDI-1],EOL
-SUB RDI,RDX
-MOV [ARGLENS+RBX*8],RDI
+MOV BYTE [RDI-1],EOL    ;Store an EOL where the null used to be [REPNE SCASB leaves RDI at +1 from where it found a match]
+SUB RDI,RDX             ;Subtract position of 0 from start address [We are generating an ordinal count here, hence its: ((pstn of 0 +1)-start addy)]
+MOV [ARGLENS+RBX*8],RDI ;
 INC RBX
 CMP RBX,R13
 JBE SCANONE
@@ -99,4 +99,4 @@ POP RBP
 
 MOV RAX,EXIT_SYSCALL
 MOV RDI,OK_RET_VAL
-SYSCALL 
+SYSCALL
